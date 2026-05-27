@@ -546,7 +546,7 @@ function UploadBox({ icon, label, hint }) {
   );
 }
 
-function Landing({ onNav }) {
+function AppHome({ onNav }) {
   return (
     <div style={{ paddingBottom: '100px' }}>
       {/* Hero con logo grande y slogan */}
@@ -1270,7 +1270,7 @@ function LotumApp() {
           onOpenMenu={() => setMenuOpen(true)}
           hasNotifications={true}
         />
-        {view === 'landing' && <Landing onNav={navigate} />}
+        {view === 'landing' && <AppHome onNav={navigate} />}
         {view === 'onboarding-owner' && <OnboardingOwner onFinish={() => navigate('marketplace')} />}
         {view === 'onboarding-investor' && <OnboardingInvestor onFinish={() => navigate('marketplace')} />}
         {view === 'marketplace' && <Marketplace onSelect={handleSelectProp} />}
