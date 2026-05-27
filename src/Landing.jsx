@@ -1109,7 +1109,7 @@ function FAQ() {
 // =======================================================================
 //   SECCIÓN 9: FOOTER
 // =======================================================================
-function Footer() {
+function Footer({ onGoToTerminos }) {
   return (
     <footer style={{
       padding: '4rem 1.5rem 2rem',
@@ -1158,7 +1158,7 @@ function Footer() {
               color: C.paper, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.12em',
               fontWeight: 600, margin: 0, marginBottom: '1rem',
             }}>Legal</h5>
-            <FootLink href="#">Términos y Condiciones</FootLink>
+            <FootLink onClick={onGoToTerminos}>Términos y Condiciones</FootLink>
             <FootLink href="#">Política de Privacidad</FootLink>
             <FootLink href="#">Defensa al consumidor</FootLink>
           </div>
@@ -1200,11 +1200,18 @@ function Footer() {
   );
 }
 
-function FootLink({ href, children }) {
+function FootLink({ href, onClick, children }) {
+  const handleClick = (e) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
   return (
-    <a href={href} style={{
+    <a href={href || '#'} onClick={handleClick} style={{
       display: 'block', color: C.paperSoft, fontSize: '0.9rem',
       textDecoration: 'none', marginBottom: '0.6rem', transition: 'color 0.2s',
+      cursor: 'pointer',
     }}
     onMouseEnter={(e) => e.currentTarget.style.color = C.terracotta}
     onMouseLeave={(e) => e.currentTarget.style.color = C.paperSoft}
@@ -1236,7 +1243,7 @@ function WhatsAppFAB() {
 // =======================================================================
 //   COMPONENTE PRINCIPAL — LANDING
 // =======================================================================
-export default function Landing({ onGoToApp }) {
+export default function Landing({ onGoToApp, onGoToTerminos }) {
   return (
     <div style={{
       background: `linear-gradient(180deg, ${C.bgDeep} 0%, ${C.bgMid} 50%, ${C.bgSoft} 100%)`,
@@ -1252,7 +1259,7 @@ export default function Landing({ onGoToApp }) {
       <DescargarApp onCtaApp={onGoToApp} />
       <ParaQuien onCtaApp={onGoToApp} />
       <FAQ />
-      <Footer />
+      <Footer onGoToTerminos={onGoToTerminos} />
       <WhatsAppFAB />
     </div>
   );
