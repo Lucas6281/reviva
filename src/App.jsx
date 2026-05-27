@@ -1068,6 +1068,142 @@ function Favorites() {
   );
 }
 
+// === PASSWORD GATE — Pantalla de acceso privado (pre-lanzamiento) ===
+// Para cambiar la clave, modificá la constante ACCESS_KEY abajo.
+const ACCESS_KEY = 'lotum2026';
+const STORAGE_KEY = 'lotum_access_granted';
+const ACCESS_DAYS = 30; // duración del acceso antes de pedir clave de nuevo
+
+function PasswordGate({ children }) {
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return false;
+      const { granted, expires } = JSON.parse(stored);
+      if (granted && expires && new Date(expires) > new Date()) return true;
+      localStorage.removeItem(STORAGE_KEY);
+      return false;
+    } catch { return false; }
+  });
+  const [input, setInput] = useState('');
+  const [error, setError] = useState(false);
+  const [shake, setShake] = useState(false);
+
+  const handleSubmit = (e) => {
+    e?.preventDefault();
+    if (input.trim().toLowerCase() === ACCESS_KEY.toLowerCase()) {
+      const expires = new Date();
+      expires.setDate(expires.getDate() + ACCESS_DAYS);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ granted: true, expires: expires.toISOString() }));
+      } catch {}
+      setUnlocked(true);
+    } else {
+      setError(true);
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      setTimeout(() => setError(false), 2500);
+    }
+  };
+
+  if (unlocked) return children;
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: `linear-gradient(180deg, ${COLORS.bgDeep} 0%, ${COLORS.bgMid} 50%, ${COLORS.bgSoft} 100%)`,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      padding: '2rem 1.5rem', fontFamily: fontBody, color: COLORS.paper,
+    }}>
+      <style>{`
+        @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .lotum-title { background: linear-gradient(90deg, ${COLORS.silver1} 0%, ${COLORS.silver3} 25%, ${COLORS.silver1} 50%, ${COLORS.silver3} 75%, ${COLORS.silver1} 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 4s ease-in-out infinite; }
+      `}</style>
+
+      {/* Logo reloj de arena */}
+      <div style={{ marginBottom: '2rem' }}>
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <defs>
+            <linearGradient id="hourglass-gate" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={COLORS.terracotta} />
+              <stop offset="100%" stopColor="#C9A961" />
+            </linearGradient>
+          </defs>
+          <circle cx="36" cy="36" r="33" stroke="url(#hourglass-gate)" strokeWidth="2.5" fill="none" opacity="0.9" />
+          <path d="M22 18 L50 18 L36 36 L50 54 L22 54 L36 36 Z" fill="url(#hourglass-gate)" />
+        </svg>
+      </div>
+
+      <h1 className="lotum-title" style={{ fontFamily: fontDisplay, fontSize: '3rem', fontWeight: 500, letterSpacing: '-0.02em', margin: 0, marginBottom: '0.5rem' }}>
+        Lótum
+      </h1>
+      <p style={{ fontFamily: fontDisplay, fontStyle: 'italic', color: COLORS.terracotta, fontSize: '1rem', margin: 0, marginBottom: '3rem' }}>
+        La paciencia, paga.
+      </p>
+
+      <div style={{
+        background: 'rgba(255,255,255,0.04)', border: `1px solid ${COLORS.border}`, borderRadius: 16,
+        padding: '1.5rem', width: '100%', maxWidth: 360, animation: shake ? 'shake 0.5s' : 'none',
+      }}>
+        <div style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: COLORS.muted, marginBottom: '0.4rem', fontWeight: 500 }}>
+          Acceso privado
+        </div>
+        <h2 style={{ fontFamily: fontDisplay, fontSize: '1.3rem', fontWeight: 500, margin: 0, marginBottom: '1.2rem', color: COLORS.paper, lineHeight: 1.3 }}>
+          Lótum está en pre-lanzamiento
+        </h2>
+        <p style={{ fontSize: '0.9rem', color: COLORS.paperSoft, margin: 0, marginBottom: '1.5rem', lineHeight: 1.5 }}>
+          Si tenés la clave de acceso, ingresala abajo. Si no, escribinos por WhatsApp y te contamos cuándo lanzamos.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <input
+            type="password"
+            value={input}
+            onChange={(e) => { setInput(e.target.value); setError(false); }}
+            placeholder="Clave de acceso"
+            autoFocus
+            style={{
+              width: '100%', boxSizing: 'border-box', padding: '0.9rem 1rem',
+              background: COLORS.bgDeep, border: `1px solid ${error ? '#E74C3C' : COLORS.border}`,
+              borderRadius: 10, color: COLORS.paper, fontSize: '1rem', fontFamily: fontBody,
+              outline: 'none', marginBottom: '0.6rem', transition: 'border 0.2s',
+            }}
+          />
+          {error && (
+            <div style={{ color: '#E74C3C', fontSize: '0.85rem', marginBottom: '0.6rem' }}>
+              Clave incorrecta. Probá de nuevo.
+            </div>
+          )}
+          <button type="submit" style={{
+            width: '100%', padding: '0.95rem 1rem', background: COLORS.terracotta, color: '#fff',
+            border: 'none', borderRadius: 10, fontSize: '1rem', fontWeight: 600, fontFamily: fontBody,
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+          }}>
+            Ingresar <ArrowRight size={18} />
+          </button>
+        </form>
+
+        <a
+          href="https://wa.me/5492235834453?text=Hola%20L%C3%B3tum!%20Quiero%20info%20sobre%20el%20lanzamiento."
+          target="_blank" rel="noopener noreferrer"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+            marginTop: '1.2rem', padding: '0.7rem', color: '#25D366', fontSize: '0.9rem',
+            textDecoration: 'none', border: `1px solid ${COLORS.border}`, borderRadius: 10, fontWeight: 500,
+          }}
+        >
+          <MessageCircle size={16} /> Escribinos por WhatsApp
+        </a>
+      </div>
+
+      <p style={{ fontSize: '0.75rem', color: COLORS.muted, marginTop: '2rem', textAlign: 'center', maxWidth: 320 }}>
+        © 2026 Lótum · Inversión inmobiliaria nueva
+      </p>
+    </div>
+  );
+}
+
 export default function App() {
   const [view, setView] = useState('landing');
   const [selectedProp, setSelectedProp] = useState(null);
@@ -1104,6 +1240,7 @@ export default function App() {
   };
 
   return (
+    <PasswordGate>
     <PaperBg>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap');
@@ -1142,5 +1279,6 @@ export default function App() {
         <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNav={navigate} />
       </div>
     </PaperBg>
+    </PasswordGate>
   );
 }
