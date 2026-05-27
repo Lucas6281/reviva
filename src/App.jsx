@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Home, ArrowRight, MapPin, Ruler, DollarSign, Hammer, CheckCircle2, ArrowLeft, Camera, FileText, ChevronRight, Eye, Menu, Bell, Search, Plus, Heart, User, Zap, Wallet, X, Settings, LogOut, HelpCircle, Shield, MessageCircle, Briefcase } from 'lucide-react';
 import Landing from './Landing';
+import Terminos from './Terminos';
 
 // === LÓTUM — Paleta azul marino oscuro con acentos plateados y terracota ===
 const COLORS = {
@@ -1291,6 +1292,7 @@ function LotumApp() {
 // =======================================================================
 //   ROUTER PRINCIPAL
 //   "/" → Landing pública
+//   "/terminos" → Página de Términos y Condiciones
 //   "/app" o cualquier otra ruta → App con clave (LotumApp + PasswordGate)
 // =======================================================================
 export default function App() {
@@ -1313,13 +1315,31 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  // Si el path es /app (o /app/algo), mostramos la app interna (con clave)
-  // Si es cualquier otra cosa (/, etc.), mostramos la landing pública
+  // Función para navegar a /terminos sin recargar la página
+  const goToTerminos = () => {
+    window.history.pushState({}, '', '/terminos');
+    setRoute('/terminos');
+    window.scrollTo(0, 0);
+  };
+
+  // Función para volver al inicio sin recargar la página
+  const goToHome = () => {
+    window.history.pushState({}, '', '/');
+    setRoute('/');
+    window.scrollTo(0, 0);
+  };
+
+  // Determinar qué ruta mostrar
   const isAppRoute = route === '/app' || route.startsWith('/app/');
+  const isTerminosRoute = route === '/terminos' || route === '/terminos/';
 
   if (isAppRoute) {
     return <LotumApp />;
   }
 
-  return <Landing onGoToApp={goToApp} />;
+  if (isTerminosRoute) {
+    return <Terminos onGoBack={goToHome} onGoToApp={goToApp} />;
+  }
+
+  return <Landing onGoToApp={goToApp} onGoToTerminos={goToTerminos} />;
 }
