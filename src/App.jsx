@@ -49,33 +49,35 @@ const MODALITIES = {
   A: {
     id: 'A', name: 'Reciclado a futuro', short: 'Reciclado',
     icon: <Hammer size={14} />, color: COLORS.modA,
-    desc: 'El inversor financia la obra. El propietario cobra cuando se venda.',
-    forOwner: 'Cobrás más, pero esperás a que se venda',
-    forInvestor: 'No comprás la propiedad, solo invertís en la obra',
+    desc: 'El inversor financia la obra. El propietario cobra un 10% más por esperar el proceso completo.',
+    forOwner: 'Cobrás un 10% más por esperar',
+    forInvestor: 'No comprás la propiedad, ganás con la obra y la venta',
     detail: {
-      summary: 'El propietario sigue siendo dueño durante todo el proceso. El inversor pone el capital de la obra, recicla la propiedad, y la ganancia se reparte cuando se vende.',
+      summary: 'El propietario sigue siendo dueño durante todo el proceso. Acepta esperar el reciclado y la venta a cambio de cobrar un 10% más sobre lo que pedía. El inversor pone toda la inversión de obra, decide el precio de venta final, y se queda con todo el excedente que supere lo pactado.',
       howItWorks: [
         'El propietario publica su propiedad indicando el precio que quiere recibir.',
-        'Un inversor se interesa y propone hacer el reciclado financiando él la obra.',
-        'Se firma un contrato que define: monto de la obra, plazo estimado, precio post-reciclado, y reparto.',
-        'El inversor ejecuta la obra (materiales + mano de obra).',
-        'Una vez terminada, se publica para la venta al valor de mercado actualizado.',
-        'Cuando se vende, primero se devuelve la inversión al inversor, después al propietario su precio, y el excedente se reparte según contrato.',
+        'Lótum proyecta el valor post-reciclado y el costo aproximado de obra.',
+        'Se le ofrece al propietario su precio + 10% extra por aceptar esperar el proceso.',
+        'Si acepta, se firma contrato: precio final al propietario queda fijo desde el día 1.',
+        'El inversor ejecuta la obra (materiales + mano de obra) por su cuenta.',
+        'El inversor decide el precio de venta final (el propietario ya no tiene incidencia).',
+        'Cuando se vende: PRIMERO cobra el propietario su precio pactado, después el inversor se queda con todo lo demás (su inversión recuperada + ganancia).',
       ],
       example: {
         title: 'Ejemplo real',
         rows: [
           ['Propietario pide', 'US$ 50.000'],
-          ['Inversión en obra', 'US$ 30.000'],
+          ['Se le ofrece (+10%)', 'US$ 55.000'],
+          ['Inversión en obra (inversor)', 'US$ 30.000'],
           ['Venta post-reciclado', 'US$ 110.000'],
-          ['Recupera inversor', 'US$ 30.000 (su inversión)'],
-          ['Recibe propietario', 'US$ 50.000 (su precio)'],
-          ['Excedente a repartir', 'US$ 30.000'],
+          ['Cobra primero propietario', 'US$ 55.000'],
+          ['Recupera inversor su obra', 'US$ 30.000'],
+          ['Ganancia inversor (excedente)', 'US$ 25.000'],
         ],
       },
-      benefitsOwner: ['No invertís nada de tu plata', 'Cobrás más que vendiendo hoy sin reciclar', 'La propiedad se valoriza sola'],
-      benefitsInvestor: ['No comprás la propiedad, solo invertís en obra', 'ROI proyectado 50-90% en 6-12 meses', 'Capital de obra protegido por contrato'],
-      risks: ['Si no se vende en el plazo, se renegocia o se cede según contrato', 'Caída de mercado puede demorar venta'],
+      benefitsOwner: ['No invertís nada de tu plata', 'Cobrás 10% más que lo que pedías', 'Tu precio queda fijo desde el día 1', 'Cobrás antes que el inversor cuando se vende'],
+      benefitsInvestor: ['No comprás la propiedad, solo invertís en obra', 'Vos decidís el precio de venta final', 'Te quedás con todo el excedente sobre lo pactado', 'Ganancia proyectada sobre datos reales'],
+      risks: ['Si no se vende en el plazo, se renegocia o se cede según contrato', 'Caída de mercado puede demorar venta o achicar ganancia del inversor', 'El propietario tiene su precio garantizado por contrato'],
     },
   },
   B: {
@@ -362,7 +364,8 @@ function SideMenu({ open, onClose, onNav }) {
 const WHATSAPP_NUMBER = '5492235834453';
 const WHATSAPP_MESSAGE = 'Hola Lótum! Quiero info sobre cómo invertir/vender una propiedad.';
 
-function WhatsAppFAB() {
+function WhatsAppFAB({ hidden }) {
+  if (hidden) return null;
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" style={{
@@ -1133,8 +1136,8 @@ export default function App() {
         {view === 'modality-detail' && selectedModality && <ModalityDetail modalityId={selectedModality} onBack={() => navigate('landing')} onNav={navigate} />}
         {view === 'dashboard' && <Dashboard />}
         {view === 'favorites' && <Favorites />}
-        {view !== 'detail' && <BottomNav current={view} onNav={navigate} />}
-        <WhatsAppFAB />
+        {!['detail', 'modality-detail', 'onboarding-owner', 'onboarding-investor'].includes(view) && <BottomNav current={view} onNav={navigate} />}
+        <WhatsAppFAB hidden={['onboarding-owner', 'onboarding-investor', 'detail'].includes(view)} />
         <NotificationsPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
         <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNav={navigate} />
       </div>
