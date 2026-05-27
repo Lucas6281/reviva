@@ -227,6 +227,9 @@ const PaperBg = ({ children }) => (
     background: `linear-gradient(180deg, ${COLORS.bgDeep} 0%, ${COLORS.bgMid} 50%, ${COLORS.bgSoft} 100%)`,
     minHeight: '100vh', position: 'relative',
     backgroundAttachment: 'fixed',
+    // Safe area: respeta notch/Dynamic Island arriba y home indicator abajo
+    paddingTop: 'env(safe-area-inset-top, 0px)',
+    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
   }}>
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none',
@@ -1113,7 +1116,8 @@ function PasswordGate({ children }) {
       minHeight: '100vh',
       background: `linear-gradient(180deg, ${COLORS.bgDeep} 0%, ${COLORS.bgMid} 50%, ${COLORS.bgSoft} 100%)`,
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: '2rem 1.5rem', fontFamily: fontBody, color: COLORS.paper,
+      padding: 'max(2rem, env(safe-area-inset-top, 0px)) 1.5rem max(2rem, env(safe-area-inset-bottom, 0px))',
+      fontFamily: fontBody, color: COLORS.paper,
     }}>
       <style>{`
         @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
