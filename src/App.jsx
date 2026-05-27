@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, ArrowRight, MapPin, Ruler, DollarSign, Hammer, CheckCircle2, ArrowLeft, Camera, FileText, ChevronRight, Eye, Menu, Bell, Search, Plus, Heart, User, Zap, Wallet, X, Settings, LogOut, HelpCircle, Shield, MessageCircle, Briefcase } from 'lucide-react';
+import Landing from './Landing';
 
 // === LÓTUM — Paleta azul marino oscuro con acentos plateados y terracota ===
 const COLORS = {
@@ -1208,7 +1209,7 @@ function PasswordGate({ children }) {
   );
 }
 
-export default function App() {
+function LotumApp() {
   const [view, setView] = useState('landing');
   const [selectedProp, setSelectedProp] = useState(null);
   const [selectedModality, setSelectedModality] = useState(null);
@@ -1285,4 +1286,40 @@ export default function App() {
     </PaperBg>
     </PasswordGate>
   );
+}
+
+// =======================================================================
+//   ROUTER PRINCIPAL
+//   "/" → Landing pública
+//   "/app" o cualquier otra ruta → App con clave (LotumApp + PasswordGate)
+// =======================================================================
+export default function App() {
+  const [route, setRoute] = useState(() => {
+    if (typeof window === 'undefined') return '/';
+    return window.location.pathname || '/';
+  });
+
+  // Escucha cambios de navegación (back/forward del navegador)
+  useEffect(() => {
+    const onPopState = () => setRoute(window.location.pathname || '/');
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  // Función para navegar a /app sin recargar la página
+  const goToApp = () => {
+    window.history.pushState({}, '', '/app');
+    setRoute('/app');
+    window.scrollTo(0, 0);
+  };
+
+  // Si el path es /app (o /app/algo), mostramos la app interna (con clave)
+  // Si es cualquier otra cosa (/, etc.), mostramos la landing pública
+  const isAppRoute = route === '/app' || route.startsWith('/app/');
+
+  if (isAppRoute) {
+    return <LotumApp />;
+  }
+
+  return <Landing onGoToApp={goToApp} />;
 }
