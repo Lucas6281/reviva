@@ -497,6 +497,22 @@ function ContentBlock({ block }) {
   return null;
 }
 
+// Item de metadata (Versión / Actualizado / Jurisdicción) en el hero
+function MetaItem({ label, value }) {
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <div style={{
+        fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase',
+        color: C.muted, fontWeight: 600, marginBottom: '0.25rem',
+      }}>{label}</div>
+      <div style={{
+        color: C.paper, fontSize: '0.88rem', fontWeight: 500,
+        fontFamily: fontBody,
+      }}>{value}</div>
+    </div>
+  );
+}
+
 // Botón "scroll arriba"
 function ScrollTopBtn() {
   const [visible, setVisible] = useState(false);
