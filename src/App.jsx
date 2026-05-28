@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Home, ArrowRight, MapPin, Ruler, DollarSign, Hammer, CheckCircle2, ArrowLeft, Camera, FileText, ChevronRight, Eye, Menu, Bell, Search, Plus, Heart, User, Zap, Wallet, X, Settings, LogOut, HelpCircle, Shield, MessageCircle, Briefcase } from 'lucide-react';
 import Landing from './Landing';
 import Terminos from './Terminos';
+import Modalidades from './Modalidades';
 import LegalPage from './LegalPage';
 import PRIVACIDAD_DATA from './legalData/privacidad';
 import DEFENSA_DATA from './legalData/defensa';
@@ -1325,6 +1326,7 @@ export default function App() {
   const goToApp = makeNav('/app');
   const goToHome = makeNav('/');
   const goToTerminos = makeNav('/terminos');
+  const goToModalidades = makeNav('/modalidades');
   const goToPrivacidad = makeNav('/privacidad');
   const goToDefensa = makeNav('/defensa-consumidor');
   const goToPublicidad = makeNav('/politica-publicidad');
@@ -1340,6 +1342,11 @@ export default function App() {
   // Términos y Condiciones
   if (cleanPath === '/terminos') {
     return <Terminos onGoBack={goToHome} onGoToApp={goToApp} />;
+  }
+
+  // Modalidades
+  if (cleanPath === '/modalidades') {
+    return <Modalidades onGoBack={goToHome} onGoToApp={goToApp} />;
   }
 
   // Política de Privacidad
@@ -1389,6 +1396,7 @@ export default function App() {
     <Landing
       onGoToApp={goToApp}
       onGoToTerminos={goToTerminos}
+      onGoToModalidades={goToModalidades}
       onGoToPrivacidad={goToPrivacidad}
       onGoToDefensa={goToDefensa}
       onGoToPublicidad={goToPublicidad}
