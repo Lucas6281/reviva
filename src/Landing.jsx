@@ -1109,7 +1109,7 @@ function FAQ() {
 // =======================================================================
 //   SECCIÓN 9: FOOTER
 // =======================================================================
-function Footer({ onGoToTerminos }) {
+function Footer({ onGoToTerminos, onGoToPrivacidad, onGoToDefensa, onGoToPublicidad }) {
   return (
     <footer style={{
       padding: '4rem 1.5rem 2rem',
@@ -1159,8 +1159,9 @@ function Footer({ onGoToTerminos }) {
               fontWeight: 600, margin: 0, marginBottom: '1rem',
             }}>Legal</h5>
             <FootLink onClick={onGoToTerminos}>Términos y Condiciones</FootLink>
-            <FootLink href="#">Política de Privacidad</FootLink>
-            <FootLink href="#">Defensa al consumidor</FootLink>
+            <FootLink onClick={onGoToPrivacidad}>Política de Privacidad</FootLink>
+            <FootLink onClick={onGoToDefensa}>Defensa del Consumidor</FootLink>
+            <FootLink onClick={onGoToPublicidad}>Política de Publicidad</FootLink>
           </div>
 
           {/* Contacto */}
@@ -1243,7 +1244,7 @@ function WhatsAppFAB() {
 // =======================================================================
 //   COMPONENTE PRINCIPAL — LANDING
 // =======================================================================
-export default function Landing({ onGoToApp, onGoToTerminos }) {
+export default function Landing({ onGoToApp, onGoToTerminos, onGoToPrivacidad, onGoToDefensa, onGoToPublicidad }) {
   return (
     <div style={{
       background: `linear-gradient(180deg, ${C.bgDeep} 0%, ${C.bgMid} 50%, ${C.bgSoft} 100%)`,
@@ -1259,7 +1260,12 @@ export default function Landing({ onGoToApp, onGoToTerminos }) {
       <DescargarApp onCtaApp={onGoToApp} />
       <ParaQuien onCtaApp={onGoToApp} />
       <FAQ />
-      <Footer onGoToTerminos={onGoToTerminos} />
+      <Footer
+        onGoToTerminos={onGoToTerminos}
+        onGoToPrivacidad={onGoToPrivacidad}
+        onGoToDefensa={onGoToDefensa}
+        onGoToPublicidad={onGoToPublicidad}
+      />
       <WhatsAppFAB />
     </div>
   );
