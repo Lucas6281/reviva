@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Home, ArrowRight, MapPin, Ruler, DollarSign, Hammer, CheckCircle2, ArrowLeft, Camera, FileText, ChevronRight, Eye, Menu, Bell, Search, Plus, Heart, User, Zap, Wallet, X, Settings, LogOut, HelpCircle, Shield, MessageCircle, Briefcase } from 'lucide-react';
 import Landing from './Landing';
 import Terminos from './Terminos';
+import LegalPage from './LegalPage';
+import PRIVACIDAD_DATA from './legalData/privacidad';
+import DEFENSA_DATA from './legalData/defensa';
+import PUBLICIDAD_DATA from './legalData/publicidad';
 
 // === LÓTUM — Paleta azul marino oscuro con acentos plateados y terracota ===
 const COLORS = {
@@ -1292,7 +1296,10 @@ function LotumApp() {
 // =======================================================================
 //   ROUTER PRINCIPAL
 //   "/" → Landing pública
-//   "/terminos" → Página de Términos y Condiciones
+//   "/terminos" → Términos y Condiciones
+//   "/privacidad" → Política de Privacidad
+//   "/defensa-consumidor" → Defensa del Consumidor
+//   "/politica-publicidad" → Política de Publicidad
 //   "/app" o cualquier otra ruta → App con clave (LotumApp + PasswordGate)
 // =======================================================================
 export default function App() {
@@ -1308,38 +1315,83 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  // Función para navegar a /app sin recargar la página
-  const goToApp = () => {
-    window.history.pushState({}, '', '/app');
-    setRoute('/app');
+  // Función helper para crear navegadores
+  const makeNav = (path) => () => {
+    window.history.pushState({}, '', path);
+    setRoute(path);
     window.scrollTo(0, 0);
   };
 
-  // Función para navegar a /terminos sin recargar la página
-  const goToTerminos = () => {
-    window.history.pushState({}, '', '/terminos');
-    setRoute('/terminos');
-    window.scrollTo(0, 0);
-  };
+  const goToApp = makeNav('/app');
+  const goToHome = makeNav('/');
+  const goToTerminos = makeNav('/terminos');
+  const goToPrivacidad = makeNav('/privacidad');
+  const goToDefensa = makeNav('/defensa-consumidor');
+  const goToPublicidad = makeNav('/politica-publicidad');
 
-  // Función para volver al inicio sin recargar la página
-  const goToHome = () => {
-    window.history.pushState({}, '', '/');
-    setRoute('/');
-    window.scrollTo(0, 0);
-  };
+  // Función para limpiar el path (sin trailing slash)
+  const cleanPath = route.replace(/\/$/, '') || '/';
 
-  // Determinar qué ruta mostrar
-  const isAppRoute = route === '/app' || route.startsWith('/app/');
-  const isTerminosRoute = route === '/terminos' || route === '/terminos/';
-
-  if (isAppRoute) {
+  // App con clave
+  if (cleanPath === '/app' || cleanPath.startsWith('/app/')) {
     return <LotumApp />;
   }
 
-  if (isTerminosRoute) {
+  // Términos y Condiciones
+  if (cleanPath === '/terminos') {
     return <Terminos onGoBack={goToHome} onGoToApp={goToApp} />;
   }
 
-  return <Landing onGoToApp={goToApp} onGoToTerminos={goToTerminos} />;
+  // Política de Privacidad
+  if (cleanPath === '/privacidad') {
+    return (
+      <LegalPage
+        data={PRIVACIDAD_DATA}
+        onGoBack={goToHome}
+        badge="Política de Privacidad"
+        titlePrefix="Política de"
+        titleHighlight="Privacidad"
+        subtitle="Protección de datos personales conforme a la Ley 25.326."
+      />
+    );
+  }
+
+  // Defensa del Consumidor
+  if (cleanPath === '/defensa-consumidor') {
+    return (
+      <LegalPage
+        data={DEFENSA_DATA}
+        onGoBack={goToHome}
+        badge="Defensa del Consumidor"
+        titlePrefix="Defensa del"
+        titleHighlight="Consumidor"
+        subtitle="Información al consumidor y usuario conforme a la Ley 24.240."
+      />
+    );
+  }
+
+  // Política de Publicidad
+  if (cleanPath === '/politica-publicidad') {
+    return (
+      <LegalPage
+        data={PUBLICIDAD_DATA}
+        onGoBack={goToHome}
+        badge="Política de Publicidad"
+        titlePrefix="Política de"
+        titleHighlight="Publicidad"
+        subtitle="Publicidad propia, contenido de usuarios, marketing e influencers."
+      />
+    );
+  }
+
+  // Landing pública por defecto
+  return (
+    <Landing
+      onGoToApp={goToApp}
+      onGoToTerminos={goToTerminos}
+      onGoToPrivacidad={goToPrivacidad}
+      onGoToDefensa={goToDefensa}
+      onGoToPublicidad={goToPublicidad}
+    />
+  );
 }
