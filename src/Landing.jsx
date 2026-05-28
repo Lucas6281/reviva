@@ -144,7 +144,7 @@ function GhostBtn({ children, onClick, href, style = {}, ...rest }) {
 // =======================================================================
 //   SECCIÓN: NAVBAR FIJO
 // =======================================================================
-function Navbar({ onCtaApp }) {
+function Navbar({ onCtaApp, onGoToModalidades }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -173,9 +173,9 @@ function Navbar({ onCtaApp }) {
           }}>Lótum</span>
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <a href="#modalidades" className="nav-link-desktop" style={{
+          <a href="/modalidades" onClick={(e) => { e.preventDefault(); onGoToModalidades(); }} className="nav-link-desktop" style={{
             color: C.paperSoft, fontSize: '0.92rem', textDecoration: 'none', fontWeight: 500,
-            padding: '0.5rem 0.9rem', borderRadius: 999, transition: 'color 0.2s',
+            padding: '0.5rem 0.9rem', borderRadius: 999, transition: 'color 0.2s', cursor: 'pointer',
           }}>Modalidades</a>
           <a href="#como-funciona" className="nav-link-desktop" style={{
             color: C.paperSoft, fontSize: '0.92rem', textDecoration: 'none', fontWeight: 500,
@@ -430,7 +430,7 @@ function QueEsLotum() {
 // =======================================================================
 //   SECCIÓN 3: LAS 4 MODALIDADES (LA MÁS IMPORTANTE)
 // =======================================================================
-function Modalidades() {
+function Modalidades({ onGoToModalidades }) {
   const [active, setActive] = useState('A');
 
   const modalidades = {
@@ -642,6 +642,38 @@ function Modalidades() {
                 </ul>
               </div>
             </div>
+          </div>
+        </Reveal>
+
+        {/* CTA: ver detalle profundo de las modalidades */}
+        <Reveal>
+          <div style={{
+            marginTop: '3rem', textAlign: 'center',
+          }}>
+            <button
+              onClick={onGoToModalidades}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+                padding: '0.9rem 1.8rem', borderRadius: 999,
+                background: 'transparent', color: C.terracotta,
+                border: `1.5px solid ${C.terracotta}`,
+                fontSize: '0.95rem', fontWeight: 600, cursor: 'pointer',
+                fontFamily: fontBody, transition: 'all 0.25s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = `${C.terracotta}15`;
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Ver detalle completo de las 4 modalidades <ArrowRight size={16} />
+            </button>
+            <p style={{
+              color: C.muted, fontSize: '0.82rem', margin: '0.8rem 0 0',
+            }}>Ejemplos numéricos, pasos del proceso, ventajas y casos de uso.</p>
           </div>
         </Reveal>
       </div>
@@ -1109,7 +1141,7 @@ function FAQ() {
 // =======================================================================
 //   SECCIÓN 9: FOOTER
 // =======================================================================
-function Footer({ onGoToTerminos, onGoToPrivacidad, onGoToDefensa, onGoToPublicidad }) {
+function Footer({ onGoToTerminos, onGoToPrivacidad, onGoToDefensa, onGoToPublicidad, onGoToModalidades }) {
   return (
     <footer style={{
       padding: '4rem 1.5rem 2rem',
@@ -1147,7 +1179,7 @@ function Footer({ onGoToTerminos, onGoToPrivacidad, onGoToDefensa, onGoToPublici
               color: C.paper, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.12em',
               fontWeight: 600, margin: 0, marginBottom: '1rem',
             }}>Producto</h5>
-            <FootLink href="#modalidades">Modalidades</FootLink>
+            <FootLink onClick={onGoToModalidades}>Modalidades</FootLink>
             <FootLink href="#como-funciona">Cómo funciona</FootLink>
             <FootLink href="#faq">FAQ</FootLink>
           </div>
@@ -1244,17 +1276,17 @@ function WhatsAppFAB() {
 // =======================================================================
 //   COMPONENTE PRINCIPAL — LANDING
 // =======================================================================
-export default function Landing({ onGoToApp, onGoToTerminos, onGoToPrivacidad, onGoToDefensa, onGoToPublicidad }) {
+export default function Landing({ onGoToApp, onGoToTerminos, onGoToModalidades, onGoToPrivacidad, onGoToDefensa, onGoToPublicidad }) {
   return (
     <div style={{
       background: `linear-gradient(180deg, ${C.bgDeep} 0%, ${C.bgMid} 50%, ${C.bgSoft} 100%)`,
       minHeight: '100vh', color: C.paper, fontFamily: fontBody,
       overflowX: 'hidden',
     }}>
-      <Navbar onCtaApp={onGoToApp} />
+      <Navbar onCtaApp={onGoToApp} onGoToModalidades={onGoToModalidades} />
       <Hero onCtaApp={onGoToApp} />
       <QueEsLotum />
-      <Modalidades />
+      <Modalidades onGoToModalidades={onGoToModalidades} />
       <ComoFunciona />
       <PorQueLotum />
       <DescargarApp onCtaApp={onGoToApp} />
@@ -1265,6 +1297,7 @@ export default function Landing({ onGoToApp, onGoToTerminos, onGoToPrivacidad, o
         onGoToPrivacidad={onGoToPrivacidad}
         onGoToDefensa={onGoToDefensa}
         onGoToPublicidad={onGoToPublicidad}
+        onGoToModalidades={onGoToModalidades}
       />
       <WhatsAppFAB />
     </div>
