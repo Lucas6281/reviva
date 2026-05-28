@@ -229,8 +229,36 @@ function Hero({ onCtaApp }) {
       }} />
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 1100, margin: '0 auto', width: '100%' }}>
-        {/* Pill superior */}
+        {/* Logo Lótum + slogan (estilo app) */}
         <Reveal delay={0}>
+          <div style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+            marginBottom: '2.5rem', gap: '0.2rem',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <LotumLogo size={48} />
+              <span style={{
+                fontFamily: fontDisplay, fontSize: 'clamp(2.2rem, 4vw, 2.8rem)',
+                fontWeight: 500, lineHeight: 1, letterSpacing: '-0.02em',
+                background: `linear-gradient(135deg, ${C.silver1} 0%, ${C.silver3} 50%, ${C.silver1} 100%)`,
+                WebkitBackgroundClip: 'text', backgroundClip: 'text',
+                WebkitTextFillColor: 'transparent', color: 'transparent',
+              }}>Lótum</span>
+            </div>
+            <p style={{
+              fontFamily: fontDisplay, fontStyle: 'italic',
+              fontSize: 'clamp(1rem, 1.4vw, 1.2rem)',
+              color: C.terracotta, fontWeight: 500,
+              margin: 0, marginLeft: 'calc(48px + 0.8rem)',
+              letterSpacing: '-0.01em',
+            }}>
+              La paciencia, paga.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* Pill superior */}
+        <Reveal delay={80}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
             padding: '0.5rem 1rem',
@@ -247,7 +275,7 @@ function Hero({ onCtaApp }) {
         </Reveal>
 
         {/* Headline gigante */}
-        <Reveal delay={120}>
+        <Reveal delay={180}>
           <h1 style={{
             fontFamily: fontDisplay, fontWeight: 400, fontSize: 'clamp(2.6rem, 7vw, 5.8rem)',
             lineHeight: 1.02, letterSpacing: '-0.025em', color: C.paper, margin: 0,
@@ -260,28 +288,18 @@ function Hero({ onCtaApp }) {
         </Reveal>
 
         {/* Subtítulo */}
-        <Reveal delay={250}>
+        <Reveal delay={280}>
           <p style={{
             fontSize: 'clamp(1.05rem, 1.6vw, 1.3rem)', color: C.paperSoft,
-            maxWidth: 620, lineHeight: 1.55, margin: 0, marginBottom: '0.6rem', fontWeight: 400,
+            maxWidth: 620, lineHeight: 1.55, margin: 0, marginBottom: '2.6rem', fontWeight: 400,
           }}>
             La primera plataforma argentina que conecta propietarios,
             inversores y restauradores para devolverle vida a las propiedades olvidadas.
           </p>
         </Reveal>
 
-        <Reveal delay={320}>
-          <p style={{
-            fontFamily: fontDisplay, fontStyle: 'italic',
-            fontSize: 'clamp(1.1rem, 1.5vw, 1.4rem)',
-            color: C.gold, margin: 0, marginBottom: '2.6rem', fontWeight: 400,
-          }}>
-            La paciencia, paga.
-          </p>
-        </Reveal>
-
         {/* CTAs */}
-        <Reveal delay={420}>
+        <Reveal delay={380}>
           <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '5rem' }}>
             <PrimaryBtn onClick={onCtaApp}>
               Probar la app <ArrowRight size={18} />
@@ -293,7 +311,7 @@ function Hero({ onCtaApp }) {
         </Reveal>
 
         {/* Pills inferiores con stats */}
-        <Reveal delay={550}>
+        <Reveal delay={500}>
           <div style={{ display: 'flex', gap: '2.5rem', flexWrap: 'wrap' }}>
             <Stat number="4" label="Modalidades de operación" />
             <Stat number="1,5%" label="Comisión solo al cierre" />
