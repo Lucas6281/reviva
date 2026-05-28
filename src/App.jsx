@@ -3,6 +3,8 @@ import { Home, ArrowRight, MapPin, Ruler, DollarSign, Hammer, CheckCircle2, Arro
 import Landing from './Landing';
 import Terminos from './Terminos';
 import Modalidades from './Modalidades';
+import VerifyIdentity from './VerifyIdentity';
+import { SettingsScreen, HelpScreen, LogoutModal } from './AppPanels';
 import LegalPage from './LegalPage';
 import PRIVACIDAD_DATA from './legalData/privacidad';
 import DEFENSA_DATA from './legalData/defensa';
@@ -355,7 +357,16 @@ function SideMenu({ open, onClose, onNav }) {
         </div>
         <div style={{ flex: 1, overflowY: 'auto', padding: '0.5rem 0' }}>
           {items.map((it, i) => (
-            <button key={i} onClick={() => { onClose(); if (it.action === 'dashboard') onNav('dashboard'); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.9rem 1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: it.danger ? COLORS.terracotta : COLORS.paper, fontFamily: fontBody, fontSize: '0.95rem', textAlign: 'left' }}>
+            <button key={i} onClick={() => {
+              onClose();
+              if (it.action === 'dashboard') onNav('dashboard');
+              else if (it.action === 'verify') onNav('verify');
+              else if (it.action === 'settings') onNav('settings');
+              else if (it.action === 'help') onNav('help');
+              else if (it.action === 'terms') { window.location.href = '/terminos'; }
+              else if (it.action === 'privacy') { window.location.href = '/privacidad'; }
+              else if (it.action === 'logout') onNav('logout');
+            }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.9rem', padding: '0.9rem 1.2rem', background: 'transparent', border: 'none', cursor: 'pointer', color: it.danger ? COLORS.terracotta : COLORS.paper, fontFamily: fontBody, fontSize: '0.95rem', textAlign: 'left' }}>
               <span style={{ color: it.danger ? COLORS.terracotta : COLORS.paperSoft }}>{it.icon}</span>
               <span>{it.label}</span>
               <ChevronRight size={16} style={{ marginLeft: 'auto', color: COLORS.muted }} />
@@ -589,6 +600,31 @@ function AppHome({ onNav }) {
           <button onClick={() => onNav('onboarding-owner')} style={primaryBtn}>Tengo una propiedad <ArrowRight size={18} /></button>
           <button onClick={() => onNav('onboarding-investor')} style={secondaryBtn}>Quiero invertir <ArrowRight size={18} /></button>
         </div>
+
+        {/* Banner: verificá tu identidad */}
+        <button
+          onClick={() => onNav('verify')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.9rem',
+            width: '100%', marginTop: '1rem', padding: '1rem',
+            background: `linear-gradient(135deg, ${COLORS.terracotta}20, ${COLORS.terracotta}08)`,
+            border: `1px solid ${COLORS.terracotta}40`, borderRadius: '14px',
+            cursor: 'pointer', fontFamily: fontBody, textAlign: 'left',
+          }}
+        >
+          <div style={{
+            width: 42, height: 42, borderRadius: '10px', flexShrink: 0,
+            background: COLORS.terracotta, display: 'flex',
+            alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Shield size={20} color="#fff" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: COLORS.paper, fontSize: '0.92rem', fontWeight: 600 }}>Verificá tu identidad</div>
+            <div style={{ color: COLORS.paperSoft, fontSize: '0.78rem', marginTop: 2 }}>Documento + Face ID + código. Lleva 2 minutos.</div>
+          </div>
+          <ChevronRight size={18} color={COLORS.terracotta} />
+        </button>
       </section>
 
       <section style={{ padding: '1rem 1.2rem 2rem' }}>
@@ -1221,12 +1257,25 @@ function LotumApp() {
   const [selectedModality, setSelectedModality] = useState(null);
   const [notifOpen, setNotifOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const navigate = (v, payload) => {
+    // Logout abre el modal en lugar de cambiar de pantalla
+    if (v === 'logout') { setLogoutOpen(true); return; }
     if (v === 'detail' && payload) setSelectedProp(payload);
     if (v === 'modality-detail' && payload) setSelectedModality(payload);
     setView(v);
     window.scrollTo(0, 0);
+  };
+
+  // Confirmar cierre de sesión: borra el acceso y vuelve al inicio (recarga)
+  const handleLogoutConfirm = () => {
+    try {
+      localStorage.removeItem('lotum_access_granted');
+    } catch (e) { /* noop */ }
+    setLogoutOpen(false);
+    // Vuelve a la landing pública
+    window.location.href = '/';
   };
 
   const handleSelectProp = (prop) => {
@@ -1268,14 +1317,16 @@ function LotumApp() {
         }
       `}</style>
       <div style={{ maxWidth: '430px', margin: '0 auto', minHeight: '100vh', background: 'transparent', position: 'relative', fontFamily: fontBody, color: COLORS.paper }}>
-        <TopBar
-          showLogo={view === 'landing'}
-          title={getTitle()}
-          onBack={showBack ? handleBack : null}
-          onOpenNotifications={() => setNotifOpen(true)}
-          onOpenMenu={() => setMenuOpen(true)}
-          hasNotifications={true}
-        />
+        {view !== 'verify' && view !== 'settings' && view !== 'help' && (
+          <TopBar
+            showLogo={view === 'landing'}
+            title={getTitle()}
+            onBack={showBack ? handleBack : null}
+            onOpenNotifications={() => setNotifOpen(true)}
+            onOpenMenu={() => setMenuOpen(true)}
+            hasNotifications={true}
+          />
+        )}
         {view === 'landing' && <AppHome onNav={navigate} />}
         {view === 'onboarding-owner' && <OnboardingOwner onFinish={() => navigate('marketplace')} />}
         {view === 'onboarding-investor' && <OnboardingInvestor onFinish={() => navigate('marketplace')} />}
@@ -1284,10 +1335,14 @@ function LotumApp() {
         {view === 'modality-detail' && selectedModality && <ModalityDetail modalityId={selectedModality} onBack={() => navigate('landing')} onNav={navigate} />}
         {view === 'dashboard' && <Dashboard />}
         {view === 'favorites' && <Favorites />}
-        {!['detail', 'modality-detail', 'onboarding-owner', 'onboarding-investor'].includes(view) && <BottomNav current={view} onNav={navigate} />}
-        <WhatsAppFAB hidden={['onboarding-owner', 'onboarding-investor', 'detail'].includes(view)} />
+        {view === 'verify' && <VerifyIdentity onClose={() => navigate('landing')} />}
+        {view === 'settings' && <SettingsScreen onBack={() => navigate('landing')} />}
+        {view === 'help' && <HelpScreen onBack={() => navigate('landing')} />}
+        {!['detail', 'modality-detail', 'onboarding-owner', 'onboarding-investor', 'verify', 'settings', 'help'].includes(view) && <BottomNav current={view} onNav={navigate} />}
+        <WhatsAppFAB hidden={['onboarding-owner', 'onboarding-investor', 'detail', 'verify', 'settings', 'help'].includes(view)} />
         <NotificationsPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
         <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} onNav={navigate} />
+        <LogoutModal open={logoutOpen} onConfirm={handleLogoutConfirm} onCancel={() => setLogoutOpen(false)} />
       </div>
     </PaperBg>
     </PasswordGate>
