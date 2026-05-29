@@ -1,0 +1,22 @@
+// =======================================================================
+//   LÓTUM — Cliente de Supabase
+//   Punto único de conexión con el backend.
+// =======================================================================
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error(
+    '❌ Faltan variables de entorno de Supabase. Revisá VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en Vercel.'
+  );
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});
